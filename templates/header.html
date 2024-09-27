@@ -1,0 +1,48 @@
+{% load static %}
+<nav class="navbar navbar-expand-xxl bg-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand ms-2" href="#">Please do me, {{ request.user.username }}!</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-3 gap-3">
+                <li class="nav-item">
+                    <a class="btn btn-secondary" href="{% url 'task_list' %}">Tasks
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li>
+                {#                <li class="nav-item dropdown">#}
+                {#                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"#}
+                {#                       aria-haspopup="true" aria-expanded="false">Menu</a>#}
+                {#                    <div class="dropdown-menu">#}
+                {#                        <a class="dropdown-item" href="#">Link 1</a>#}
+                {#                        <a class="dropdown-item" href="#">Link 2</a>#}
+                {#                        <div class="dropdown-divider"></div>#}
+                {#                        <a class="dropdown-item" href="#">Separated link</a>#}
+                {#                    </div>#}
+                {#                </li>#}
+                <li class="nav-item">
+                    <a class="btn btn-primary" href="{% url 'home' %}">New Task</a>
+                </li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="btn btn-danger" href='{% url 'logout' %}'>Logout</a>
+                    </li>
+                {% else %}
+                    {% if request.path == '/register/' %}
+                        <li class="nav-item">
+                            <a class="btn btn-warning" href='{% url 'login' %}'>Login</a>
+                        </li>
+                    {% elif request.path == '/login/' %}
+                        <li class="nav-item">
+                            <a class="btn btn-warning" href='{% url 'register' %}'>Register</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
