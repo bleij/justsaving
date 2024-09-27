@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from task.models import Task
 from task.forms import NewTaskForm
+from django.views.generic import ListView, UpdateView, DeleteView
+from task.filters import TaskFilter
 
 
 @login_required
@@ -20,9 +22,19 @@ def home(request):
     return render(request, 'core/index.html', context)
 
 
-@login_required
-def task_list(request):
-    # tasks = Task.objects.filter(user=request.user).order_by("-id")
-    tasks = Task.objects.all()
-    context = {'tasks': tasks}
-    return render(request, 'task/tasks.html', context)
+class TaskListView(ListView):
+    model = Task
+    template_name = 'task/tasks.html'
+    context_object_name = 'tasks'
+
+    # ordering = ['-date_posted']
+    # paginate_by = 3
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            tasks = Task.objects.all()
+            context['task'] = tasks
+            context['total_tasks'] = round(tasks.filter(status='done').count() / tasks.count() * 100, 1)
+            context['filter'] = TaskFilter(self.request.GET, queryset=self.get_queryset())
+        return context
