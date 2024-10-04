@@ -1,7 +1,7 @@
 {% load static %}
-<nav class="navbar navbar-expand-xxl bg-dark" data-bs-theme="dark">
+<nav class="navbar fixed-top navbar-expand-xxl bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand ms-2" href="#">Please do me, {{ request.user.username }}!</a>
+        <a class="navbar-brand ms-2 p-4" href="{% url 'task_list' %}">Please do me, {{ request.user.username }}!</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -24,7 +24,7 @@
                 {#                    </div>#}
                 {#                </li>#}
                 <li class="nav-item">
-                    <a class="btn btn-primary" href="{% url 'home' %}">New Task</a>
+                    <a class="btn btn-primary" href="{% url 'create_task' %}">New Task</a>
                 </li>
 
                 {% if user.is_authenticated %}

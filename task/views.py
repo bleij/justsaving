@@ -1,37 +1,28 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, UpdateView, DeleteView
 from .models import Task
+from .forms import NewTaskForm
 
 
-# @login_required
-# def update_task(request, pk):
-#     task = get_object_or_404(Task, id=pk, user=request.user)
-#     task.name = request.POST.get(f'task_{pk}')
-#     task.save()
-#
-#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-class UpdateTask(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Task
-    fields = ['title', 'description']
-    template_name = 'core/index.html'
-    success_url = reverse_lazy('task_list')
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        task = self.get_object()
-        return self.request.user == task.user
+@login_required
+def update_task(request, pk):
+    task = Task.objects.get(id=pk)
+    if task.user == request.user:
+        if request.method == 'GET':
+            form = NewTaskForm(instance=task)
+            return render(request, template_name='task/task_edit.html', context={'task': task, 'form': form})
+        elif request.method == 'POST':
+            form = NewTaskForm(request.POST, instance=task)
+            if form.is_valid():
+                form.save()
+                return redirect('task_list')
+    else:
+        return redirect('task_list')
 
 
-@login_required()
+@login_required
 def delete_task(request, pk):
-    task = get_object_or_404(Task, id=pk, user=request.user)
-    task.delete()
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    task = Task.objects.get(id=pk)
+    if task.user == request.user:
+        task.delete()
+    return redirect('task_list')

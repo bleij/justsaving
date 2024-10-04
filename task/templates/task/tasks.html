@@ -8,7 +8,7 @@
             {% include 'header.html' %}
         </div>
     </div>
-    <div class="container mt-5 col-lg-6 col-sm-8">
+    <div class="container mt-5 col-lg-6 col-md-8 col-auto">
         <h1>Completed: {{ total_tasks }} %</h1>
         <div class="progress mb-5">
             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
@@ -17,37 +17,67 @@
         </div>
         <h1>Tasks:</h1>
         <div class="card mt-3 mb-3 p-3">
-            <form method="GET">
-                {{ filter.form.as_table }}
-                <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+            <form class="ps-5 pe-5" method="GET">
+                {{ filter.form|crispy }}
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="assigned_to_me"
+                           {% if request.GET.assigned_to_me %}checked{% endif %}>
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Assigned to me</label>
+                </div>
+                <button type="submit" class="btn btn-outline-warning btn-md mt-3">Apply</button>
             </form>
         </div>
-        <div class="card">
-            <div class="card-body">
-                {% if tasks %}
-                    <ul class="list-group">
-                        {% for task in filter.qs %}
+
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="card border-dark mb-3 p-3">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card-header">
+                                <h3 class="card-title"> {{ task.title }} </h3>
+                                <p class="card-text"> {{ task.description }} </p>
+                            </div>
+                        </div>
+                        <div class="col-auto d-flex jutsify-content-end">
                             {% if task.user == request.user %}
-                                <li class="list-group-item">
-                                    <strong>{{ task.title }}</strong> - {{ task.description }}<br>
-                                    Due: {{ task.due_date|date:"d-m-Y H:i" }}<br>
-                                    Status: {{ task.get_status_display }} | Priority: {{ task.get_priority_display }} |
-                                    Category: {{ task.category }}
-                                    <div class="mt-2">
-                                        <a href="{% url 'update_task' task.id %}"
-                                           class="btn btn-outline-primary btn-sm">Edit</a>
-                                        <a href="{% url 'delete_task' task.id %}"
-                                           class="btn btn-outline-danger btn-sm">Delete</a>
-                                    </div>
-                                </li>
+                                <div class="mt-2">
+                                    <a href="{% url 'update_task' task.id %}"
+                                       class="btn btn-primary btn-sm">Edit</a>
+                                    <a href="{% url 'delete_task' task.id %}"
+                                       class="btn btn-danger btn-sm">Delete</a>
+                                </div>
                             {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>No tasks available.</p>
-                {% endif %}
-            </div>
-        </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p>Status: {% if task.status == 'done' %}
+                            <span class="badge rounded-pill bg-success">{{ task.get_status_display }}</span>
+                        {% elif task.status == 'wip' %}
+                            <span class="badge rounded-pill bg-info">{{ task.get_status_display }}</span>
+                        {% elif task.status == 'ns' %}
+                            <span class="badge rounded-pill bg-danger">{{ task.get_status_display }}</span>
+                        {% endif %}
+                            |
+                            Priority:   {% if task.priority == '0' %}
+                                <span class="badge rounded-pill bg-success">{{ task.get_priority_display }}</span>
+                            {% elif task.priority == '1' %}
+                                <span class="badge rounded-pill bg-warning">{{ task.get_priority_display }}</span>
+                            {% elif task.priority == '2' %}
+                                <span class="badge rounded-pill bg-danger">{{ task.get_priority_display }}</span>
+                            {% endif %}
+                            |
+                            Category:
+                            <span class="badge rounded-pill bg-light">{{ task.get_category_display }}</span>
+                            <br><br>
+                            Deadline:
+                            <span class="badge rounded-pill bg-dark"> {{ task.due_date|date:"d F Y H:i" }} </span>
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No tasks available.</p>
+        {% endif %}
     </div>
 
 {% endblock %}

@@ -29,7 +29,7 @@ class Task(models.Model):
     priority = models.CharField(max_length=32, choices=PRIORITY_CHOICES)
     category = models.CharField(max_length=32, choices=CATEGORY_CHOICES)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='task')
-    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assigned_task')
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assigned_task', blank=True)
 
     class Meta:
         app_label = "task"

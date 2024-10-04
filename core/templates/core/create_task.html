@@ -2,23 +2,23 @@
 {% block cssfiles %} {% endblock cssfiles %} {% block content %}
     <div class="container-fluid">
         <div class="row">
-                {% include 'header.html' %}
+            {% include 'header.html' %}
         </div>
     </div>
-    <div class="container mt-5">
-    <h1>Create new task</h1>
+    <div class="container mt-5 col-lg-6 col-sm-8 mb-5">
+        <h1>Create new task</h1>
         <div class="card">
             <div class="row justify-content-center">
-                <div class="col-md-6">
+                <div class="col-8 col-auto">
                     <form method="post">
                         {% csrf_token %}
                         <fieldset class="form-group">
                             <br/>
                             {{ form|crispy }}
                         </fieldset>
-                        <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">Submit</button>
                     </form>
                 </div>
+                <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase col-8 mt-4">Submit</button>
             </div>
         </div>
     </div>

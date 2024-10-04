@@ -7,4 +7,3 @@ class TaskFilter(django_filters.FilterSet):
     class Meta:
         model = Task
         fields = ('status', 'priority', 'category')
-
