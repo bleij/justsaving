@@ -26,3 +26,5 @@ def delete_task(request, pk):
     if task.user == request.user:
         task.delete()
     return redirect('task_list')
+
+
