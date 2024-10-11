@@ -13,8 +13,10 @@ def create_task(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.user = request.user
+            if not request.user.groups.filter(name='Project Manager').exists():
+                task.assigned_to = request.user
             task.save()
-            return redirect('create_task')
+            return redirect('task_list')
     else:
         form = NewTaskForm()
 

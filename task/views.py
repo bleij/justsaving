@@ -10,12 +10,16 @@ def update_task(request, pk):
     if task.user == request.user:
         if request.method == 'GET':
             form = NewTaskForm(instance=task)
+            if not request.user.groups.filter(name='Project Manager').exists():
+                form.fields['assigned_to'].disabled = True
+                form.fields['assigned_to'].initial = request.user
             return render(request, template_name='task/task_edit.html', context={'task': task, 'form': form})
         elif request.method == 'POST':
             form = NewTaskForm(request.POST, instance=task)
             if form.is_valid():
                 form.save()
                 return redirect('task_list')
+
     else:
         return redirect('task_list')
 
@@ -26,5 +30,3 @@ def delete_task(request, pk):
     if task.user == request.user:
         task.delete()
     return redirect('task_list')
-
-
